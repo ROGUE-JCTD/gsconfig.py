@@ -206,4 +206,32 @@ class WmsLayer(ResourceInfo):
     resource_type = "wmslayer"
     save_method = "PUT"
 
-    # Much more here
+    # This is copied wholesale from the Coverage and while it *works*,
+    # this needs to reflect the ACTUAL fields exposed in a wmsStore
+    title = xml_property("title")
+    abstract = xml_property("abstract")
+    enabled = xml_property("enabled")
+    native_bbox = xml_property("nativeBoundingBox", bbox)
+    latlon_bbox = xml_property("latLonBoundingBox", bbox)
+    projection = xml_property("srs")
+    projection_policy = xml_property("projectionPolicy")
+    keywords = xml_property("keywords", string_list)
+    request_srs_list = xml_property("requestSRS", string_list)
+    response_srs_list = xml_property("responseSRS", string_list)
+    supported_formats = xml_property("supportedFormats", string_list)
+    metadata_links = xml_property("metadataLinks", metadata_link_list)
+
+    writers = dict(
+                title = write_string("title"),
+                abstract = write_string("abstract"),
+                enabled = write_bool("enabled"),
+                nativeBoundingBox = write_bbox("nativeBoundingBox"),
+                latLonBoundingBox = write_bbox("latLonBoundingBox"),
+                projection = write_string("srs"),
+                projection_policy = write_string("projectionPolicy"),
+                keywords = write_string_list("keywords"),
+                metadataLinks = write_metadata_link_list("metadataLinks"),
+                requestSRS = write_string_list("requestSRS"),
+                responseSRS = write_string_list("responseSRS"),
+                supportedFormats = write_string_list("supportedFormats")
+            )
