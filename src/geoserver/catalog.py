@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 import logging
 from geoserver.layer import Layer
-from geoserver.store import coveragestore_from_index, datastore_from_index, \
-    DataStore, CoverageStore, UnsavedDataStore, UnsavedCoverageStore
+from geoserver.store import coveragestore_from_index, datastore_from_index, wmsstore_from_index, \
+    DataStore, CoverageStore, WmsStore, UnsavedDataStore, UnsavedCoverageStore, UnsavedWmsStore
 from geoserver.style import Style
 from geoserver.support import prepare_upload_bundle
 from geoserver.layergroup import LayerGroup, UnsavedLayerGroup
@@ -162,9 +162,12 @@ class Catalog(object):
           logger.debug("datastore url is [%s]", workspace.datastore_url )
           ds_list = self.get_xml(workspace.datastore_url)
           cs_list = self.get_xml(workspace.coveragestore_url)
+          wms_list = self.get_xml(workspace.wmsstore_url)
           datastores = [n for n in ds_list.findall("dataStore") if n.find("name").text == name]
           coveragestores = [n for n in cs_list.findall("coverageStore") if n.find("name").text == name]
-          ds_len, cs_len = len(datastores), len(coveragestores)
+          wmsstores = [n for n in wms_list.findall("wmsStore") if n.find("name").text == name]
+          print wmsstores
+          ds_len, cs_len, wms_len = len(datastores), len(coveragestores), len(wmsstores)
 
           if ds_len == 1 and cs_len == 0:
               return datastore_from_index(self, workspace, datastores[0])
@@ -179,9 +182,11 @@ class Catalog(object):
       if workspace is not None:
           ds_list = self.get_xml(workspace.datastore_url)
           cs_list = self.get_xml(workspace.coveragestore_url)
+          wms_list = self.get_xml(workspace.wmsstore_url)
           datastores = [datastore_from_index(self, workspace, n) for n in ds_list.findall("dataStore")]
           coveragestores = [coveragestore_from_index(self, workspace, n) for n in cs_list.findall("coverageStore")]
-          return datastores + coveragestores
+          wmsstores = [wmsstore_from_index(self, workspace, n) for n in wms_list.findall("wmsStore")]
+          return datastores + coveragestores + wmsstores
       else:
           stores = []
           for ws in self.get_workspaces():

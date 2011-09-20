@@ -44,6 +44,10 @@ def coverage_from_index(catalog, workspace, store, node):
     name = node.find("name")
     return Coverage(catalog, workspace, store, name.text)
 
+def wmslayer_from_index(catalog, workspace, store, node):
+    name = node.find("name")
+    return WmsLayer(catalog, workspace, store, name.text)
+
 class FeatureType(ResourceInfo):
     resource_type = "featureType"
     save_method = "PUT"
@@ -181,3 +185,25 @@ class Coverage(ResourceInfo):
                 responseSRS = write_string_list("responseSRS"),
                 supportedFormats = write_string_list("supportedFormats")
             )
+
+class WmsLayer(ResourceInfo):
+    def __init__(self, catalog, workspace, store, name):
+        super(WmsLayer, self).__init__()
+        self.catalog = catalog
+        self.workspace = workspace
+        self.store = store
+        self.name = name
+
+    @property
+    def href(self):
+        return "%s/workspaces/%s/wmsstores/%s/wmslayers/%s.xml" % (
+                self.catalog.service_url,
+                self.workspace.name,
+                self.store.name,
+                self.name
+                )
+
+    resource_type = "wmslayer"
+    save_method = "PUT"
+
+    # Much more here
