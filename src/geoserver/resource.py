@@ -187,6 +187,9 @@ class Coverage(ResourceInfo):
             )
 
 class WmsLayer(ResourceInfo):
+    resource_type = "wmsLayer"
+    save_method = "PUT"
+    
     def __init__(self, catalog, workspace, store, name):
         super(WmsLayer, self).__init__()
         self.catalog = catalog
@@ -203,35 +206,29 @@ class WmsLayer(ResourceInfo):
                 self.name
                 )
 
-    resource_type = "wmslayer"
-    save_method = "PUT"
 
-    # This is copied wholesale from the Coverage and while it *works*,
-    # this needs to reflect the ACTUAL fields exposed in a wmsStore
     title = xml_property("title")
+    description = xml_property("description")
     abstract = xml_property("abstract")
-    enabled = xml_property("enabled")
+    keywords = xml_property("keywords", string_list)
+    # nativeCRS
+    projection = xml_property("srs")
     native_bbox = xml_property("nativeBoundingBox", bbox)
     latlon_bbox = xml_property("latLonBoundingBox", bbox)
-    projection = xml_property("srs")
     projection_policy = xml_property("projectionPolicy")
-    keywords = xml_property("keywords", string_list)
-    request_srs_list = xml_property("requestSRS", string_list)
-    response_srs_list = xml_property("responseSRS", string_list)
-    supported_formats = xml_property("supportedFormats", string_list)
-    metadata_links = xml_property("metadataLinks", metadata_link_list)
-
+    enabled = xml_property("enabled")
+    metadata_links = xml_property("metadataLinks", metadata_link_list)   
+ 
     writers = dict(
                 title = write_string("title"),
+                description = write_string("description"),
                 abstract = write_string("abstract"),
-                enabled = write_bool("enabled"),
+                keywords = write_string_list("keywords"),
+                # nativeCRS
+                projection = write_string("srs"),
                 nativeBoundingBox = write_bbox("nativeBoundingBox"),
                 latLonBoundingBox = write_bbox("latLonBoundingBox"),
-                projection = write_string("srs"),
                 projection_policy = write_string("projectionPolicy"),
-                keywords = write_string_list("keywords"),
-                metadataLinks = write_metadata_link_list("metadataLinks"),
-                requestSRS = write_string_list("requestSRS"),
-                responseSRS = write_string_list("responseSRS"),
-                supportedFormats = write_string_list("supportedFormats")
+                enabled = write_bool("enabled"),
+                metadataLinks = write_metadata_link_list("metadataLinks")
             )
