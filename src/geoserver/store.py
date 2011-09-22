@@ -149,18 +149,24 @@ class WmsStore(ResourceInfo):
                    capabilitiesURL = write_string("capabilitiesURL"),
                    type = write_string("type"))
 
-    def get_resources(self):
+    def get_resources(self, available=False):
+        
         res_url = "%s/workspaces/%s/wmsstores/%s/wmslayers.xml" % (
                    self.catalog.service_url,
                    self.workspace.name,
                    self.name
                 )
+        if available:
+            res_url += "?list=available"
 
         xml = self.catalog.get_xml(res_url)
         def wl_from_node(node):
             return wmslayer_from_index(self.catalog, self.workspace, self, node)
 
-        return [wl_from_node(node) for node in xml.findall("wmsLayer")]
+        if available:
+            return [str(node.text) for node in xml.findall("wmsLayerName")]
+        else:
+            return [wl_from_node(node) for node in xml.findall("wmsLayer")]
 
 class UnsavedWmsStore(WmsStore):
     save_method = "POST"
