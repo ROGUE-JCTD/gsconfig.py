@@ -141,12 +141,13 @@ class WmsStore(ResourceInfo):
 
     enabled = xml_property("enabled", lambda x: x.text == "true")
     name = xml_property("name")
-    connection_parameters = xml_property("connectionParameters", key_value_pairs)
+    capabilitiesURL = xml_property("capabilitiesURL")
+    type = xml_property("type")
 
     writers = dict(enabled = write_bool("enabled"),
                    name = write_string("name"),
-                   connectionParameters = write_dict("connectionParameters"))
-
+                   capabilitiesURL = write_string("capabilitiesURL"),
+                   type = write_string("type"))
 
     def get_resources(self):
         res_url = "%s/workspaces/%s/wmsstores/%s/wmslayers.xml" % (
@@ -154,19 +155,20 @@ class WmsStore(ResourceInfo):
                    self.workspace.name,
                    self.name
                 )
+
         xml = self.catalog.get_xml(res_url)
-        def ft_from_node(node):
+        def wl_from_node(node):
             return wmslayer_from_index(self.catalog, self.workspace, self, node)
 
-        return [ft_from_node(node) for node in xml.findall("wmsLayer")]
+        return [wl_from_node(node) for node in xml.findall("wmsLayer")]
 
-class UnsavedWmsStore(DataStore):
+class UnsavedWmsStore(WmsStore):
     save_method = "POST"
 
     def __init__(self, catalog, name, workspace):
         super(UnsavedWmsStore, self).__init__(catalog, workspace, name)
         self.dirty.update(dict(
-            name=name, enabled=True, connectionParameters=dict()))
+            name=name, enabled=True, capabilitiesURL="", type="WMS"))
 
     @property
     def href(self):
