@@ -211,6 +211,24 @@ class Catalog(object):
           workspace = self.get_default_workspace()
       return UnsavedCoverageStore(self, name, workspace)
 
+  def create_wmsstore(self, name, workspace = None):
+      if workspace is None:
+          workspace = self.get_default_workspace()
+      return UnsavedWmsStore(self, name, workspace)
+
+  def create_wmslayer(self, workspace, store, name):
+    headers = {
+      "Content-type": "text/xml",
+      "Accept": "application/xml"
+    }
+
+    wms_url = store.href.replace('.xml', '/wmslayers')
+    data = "<wmsLayer><name>%s</name></wmsLayer>" % name
+    headers, response = self.http.request(wms_url, "POST", data, headers)
+
+    self._cache.clear()
+    if headers.status < 200 or headers.status > 299: raise UploadError(response) 
+
   def add_data_to_store(self, store, name, data, overwrite = False, charset = None):
       if isinstance(data, dict):
           bundle = prepare_upload_bundle(name, data)
