@@ -228,6 +228,7 @@ class Catalog(object):
 
     self._cache.clear()
     if headers.status < 200 or headers.status > 299: raise UploadError(response) 
+    return self.get_resource(name, store=store, workspace=workspace)
 
   def add_data_to_store(self, store, name, data, overwrite = False, charset = None):
       if isinstance(data, dict):
