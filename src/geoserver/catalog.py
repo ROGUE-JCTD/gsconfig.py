@@ -211,10 +211,10 @@ class Catalog(object):
           workspace = self.get_default_workspace()
       return UnsavedCoverageStore(self, name, workspace)
 
-  def create_wmsstore(self, name, workspace = None):
+  def create_wmsstore(self, name, workspace = None, user = None, password = None):
       if workspace is None:
           workspace = self.get_default_workspace()
-      return UnsavedWmsStore(self, name, workspace)
+      return UnsavedWmsStore(self, name, workspace, user, password)
 
   def create_wmslayer(self, workspace, store, name):
     headers = {

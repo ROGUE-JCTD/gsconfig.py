@@ -13,7 +13,9 @@ def coveragestore_from_index(catalog, workspace, node):
 
 def wmsstore_from_index(catalog, workspace, node):
     name = node.find("name")
-    return WmsStore(catalog, workspace, name.text)
+    #user = node.find("user")
+    #password = node.find("password")
+    return WmsStore(catalog, workspace, name.text, None, None)
 
 class DataStore(ResourceInfo):
     resource_type = "dataStore"
@@ -126,7 +128,7 @@ class WmsStore(ResourceInfo):
     resource_type = "wmsStore"
     save_method = "PUT"
 
-    def __init__(self, catalog, workspace, name):
+    def __init__(self, catalog, workspace, name, user, password):
         super(WmsStore, self).__init__()
 
         assert isinstance(workspace, ws.Workspace)
@@ -134,6 +136,8 @@ class WmsStore(ResourceInfo):
         self.catalog = catalog
         self.workspace = workspace
         self.name = name
+        self.user = user
+        self.password = password
 
     @property
     def href(self):
@@ -141,11 +145,15 @@ class WmsStore(ResourceInfo):
 
     enabled = xml_property("enabled", lambda x: x.text == "true")
     name = xml_property("name")
+    user = xml_property("user")
+    password = xml_property("password")
     capabilitiesURL = xml_property("capabilitiesURL")
     type = xml_property("type")
 
     writers = dict(enabled = write_bool("enabled"),
                    name = write_string("name"),
+                   user = write_string("user"),
+                   password = write_string("password"),
                    capabilitiesURL = write_string("capabilitiesURL"),
                    type = write_string("type"))
 
@@ -171,10 +179,10 @@ class WmsStore(ResourceInfo):
 class UnsavedWmsStore(WmsStore):
     save_method = "POST"
 
-    def __init__(self, catalog, name, workspace):
-        super(UnsavedWmsStore, self).__init__(catalog, workspace, name)
+    def __init__(self, catalog, name, workspace, user, password):
+        super(UnsavedWmsStore, self).__init__(catalog, workspace, name, user, password)
         self.dirty.update(dict(
-            name=name, enabled=True, capabilitiesURL="", type="WMS"))
+            name=name, enabled=True, capabilitiesURL="", type="WMS", user=user, password=password))
 
     @property
     def href(self):
