@@ -136,8 +136,9 @@ class WmsStore(ResourceInfo):
         self.catalog = catalog
         self.workspace = workspace
         self.name = name
-        #self.user = user
-        #self.password = password
+        self.metadata = {}
+        self.metadata['user'] = user
+        self.metadata['password'] = password 
 
     @property
     def href(self):
@@ -145,17 +146,16 @@ class WmsStore(ResourceInfo):
 
     enabled = xml_property("enabled", lambda x: x.text == "true")
     name = xml_property("name")
-    #user = xml_property("user")
-    #password = xml_property("password")
     capabilitiesURL = xml_property("capabilitiesURL")
     type = xml_property("type")
+    metadata = xml_property("metadata", key_value_pairs)
 
     writers = dict(enabled = write_bool("enabled"),
                    name = write_string("name"),
-                   #user = write_string("user"),
-                   #password = write_string("password"),
                    capabilitiesURL = write_string("capabilitiesURL"),
-                   type = write_string("type"))
+                   type = write_string("type"),
+                   metadata = write_dict("metadata"))
+
 
     def get_resources(self, available=False):
         
@@ -181,9 +181,9 @@ class UnsavedWmsStore(WmsStore):
 
     def __init__(self, catalog, name, workspace, user, password):
         super(UnsavedWmsStore, self).__init__(catalog, workspace, name, user, password)
+        metadata = {'user' : user, 'password' : password }
         self.dirty.update(dict(
-            name=name, enabled=True, capabilitiesURL="", type="WMS"))
-            #name=name, enabled=True, capabilitiesURL="", type="WMS", user=user, password=password))
+            name=name, enabled=True, capabilitiesURL="", type="WMS", metadata=metadata))
 
     @property
     def href(self):
