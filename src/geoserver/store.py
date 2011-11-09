@@ -56,7 +56,10 @@ class DataStore(ResourceInfo):
         def ft_from_node(node):
             return featuretype_from_index(self.catalog, self.workspace, self, node)
 
-        return [ft_from_node(node) for node in xml.findall("featureType")]
+        if available:
+            return [str(node.text) for node in xml.findall("featureTypeName")]
+        else:
+            return [ft_from_node(node) for node in xml.findall("featureType")]
 
 class UnsavedDataStore(DataStore):
     save_method = "POST"
@@ -184,7 +187,10 @@ class UnsavedWmsStore(WmsStore):
 
     def __init__(self, catalog, name, workspace, user, password):
         super(UnsavedWmsStore, self).__init__(catalog, workspace, name, user, password)
-        metadata = {'user' : user, 'password' : password }
+        metadata = {}
+        if user is not None and password is not None:
+            metadata['user'] = user
+            metadata['password'] = password
         self.dirty.update(dict(
             name=name, enabled=True, capabilitiesURL="", type="WMS", metadata=metadata))
 
