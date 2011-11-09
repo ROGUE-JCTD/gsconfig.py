@@ -230,6 +230,20 @@ class Catalog(object):
     if headers.status < 200 or headers.status > 299: raise UploadError(response) 
     return self.get_resource(name, store=store, workspace=workspace)
 
+  def create_wfslayer(self, workspace, store, name):
+    headers = {
+      "Content-type": "text/xml",
+      "Accept": "application/xml"
+    }
+
+    wfs_url = store.href.replace('.xml', '/featuretypes')
+    data = "<featureType><name>%s</name></featureType>" % name
+    headers, response = self.http.request(wfs_url, "POST", data, headers)
+
+    self._cache.clear()
+    if headers.status < 200 or headers.status > 299: raise UploadError(response) 
+    return self.get_resource(name, store=store, workspace=workspace)
+
   def add_data_to_store(self, store, name, data, overwrite = False, charset = None):
       if isinstance(data, dict):
           bundle = prepare_upload_bundle(name, data)
