@@ -36,6 +36,7 @@ class DataStore(ResourceInfo):
 
     enabled = xml_property("enabled", lambda x: x.text == "true")
     name = xml_property("name")
+    type = xml_property("type")
     connection_parameters = xml_property("connectionParameters", key_value_pairs)
 
     writers = dict(enabled = write_bool("enabled"),
