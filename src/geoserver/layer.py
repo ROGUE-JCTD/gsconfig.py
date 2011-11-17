@@ -86,8 +86,11 @@ class Layer(ResourceInfo):
             return self.dirty['default_style']
         if self.dom is None:
             self.fetch()
-        name = self.dom.find("defaultStyle/name").text
-        return self.catalog.get_style(name)
+        name_el = self.dom.find("defaultStyle/name")
+        if name_el:
+            return self.catalog.get_style(name_el.text)
+        else:
+            return None
 
     def _set_default_style(self, style):
         if isinstance(style, Style):
