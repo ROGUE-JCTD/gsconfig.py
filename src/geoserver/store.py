@@ -31,10 +31,12 @@ class DataStore(ResourceInfo):
 
     enabled = xml_property("enabled", lambda x: x.text == "true")
     name = xml_property("name")
+    type = xml_property("type")
     connection_parameters = xml_property("connectionParameters", key_value_pairs)
 
     writers = dict(enabled = write_bool("enabled"),
                    name = write_string("name"),
+                   type = write_string("type"),
                    connectionParameters = write_dict("connectionParameters"))
 
 
@@ -53,7 +55,8 @@ class UnsavedDataStore(DataStore):
     def __init__(self, catalog, name, workspace):
         super(UnsavedDataStore, self).__init__(catalog, workspace, name)
         self.dirty.update(dict(
-            name=name, enabled=True, connectionParameters=dict()))
+            name=name, enabled=True,  type="",
+            connectionParameters=dict()))
 
     @property
     def href(self):
