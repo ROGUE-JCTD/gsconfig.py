@@ -55,7 +55,7 @@ class UnsavedDataStore(DataStore):
     def __init__(self, catalog, name, workspace):
         super(UnsavedDataStore, self).__init__(catalog, workspace, name)
         self.dirty.update(dict(
-            name=name, enabled=True,  type="",
+            name=name, enabled=True,  type=None,
             connectionParameters=dict()))
 
     @property
