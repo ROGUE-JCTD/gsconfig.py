@@ -1,14 +1,13 @@
 import unittest
 from geoserver.catalog import Catalog, ConflictingDataError, UploadError, \
     FailedRequestError
-from geoserver.support import ResourceInfo
+from geoserver.support import ResourceInfo, url
 from geoserver.layergroup import LayerGroup
 from geoserver.util import shapefile_and_friends
 
 class CatalogTests(unittest.TestCase):
     def setUp(self):
         self.cat = Catalog("http://localhost:8080/geoserver/rest")
-
 
     def testWorkspaces(self):
         self.assertEqual(7, len(self.cat.get_workspaces()))
@@ -121,6 +120,22 @@ class CatalogTests(unittest.TestCase):
                 name="best resource ever"))
         self.cat.get_layer("best layer ever")
         self.cat.get_layergroup("best layergroup ever")
+
+    def testUnicodeUrl(self):
+        """
+        Tests that the geoserver.support.url function support unicode strings.
+        """
+
+        # Test the url function with unicode
+        seg = ['workspaces', 'test', 'datastores', u'operaci\xf3n_repo', 'featuretypes.xml']
+        u = url(base=self.cat.service_url, seg=seg)
+        self.assertEqual(u, self.cat.service_url + "/workspaces/test/datastores/operaci%C3%B3n_repo/featuretypes.xml")
+
+        # Test the url function with normal string
+        seg = ['workspaces', 'test', 'datastores', 'test-repo', 'featuretypes.xml']
+        u = url(base=self.cat.service_url, seg=seg)
+        self.assertEqual(u, self.cat.service_url + "/workspaces/test/datastores/test-repo/featuretypes.xml")
+
 
 class ModifyingTests(unittest.TestCase):
     def setUp(self):

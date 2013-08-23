@@ -30,7 +30,16 @@ def url(base, seg, query=None):
     parameters.
     """
 
-    seg = (urllib.quote(s.strip('/')) for s in seg)
+    def clean_segment(segment):
+        """
+        Cleans the segment and encodes to UTF-8 if the segment is unicode.
+        """
+        segment = segment.strip('/')
+        if isinstance(segment, unicode):
+            segment = segment.encode('utf-8')
+        return segment
+
+    seg = (urllib.quote(clean_segment(s)) for s in seg)
     if query is None or len(query) == 0:
         query_string = ''
     else:
