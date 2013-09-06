@@ -19,12 +19,14 @@ def write_metadata_link_list(name):
     def write(builder, md_links):
         builder.start(name, dict())
         for (mime, md_type, content_url) in md_links:
+            if mime not in ['ISO19115:2003', 'FGDC', 'TC211']:
+                mime = 'other'
             builder.start("metadataLink", dict())
             builder.start("type", dict())
-            builder.data(mime)
+            builder.data(md_type)
             builder.end("type")
             builder.start("metadataType", dict())
-            builder.data(md_type)
+            builder.data(mime)
             builder.end("metadataType")
             builder.start("content", dict())
             builder.data(content_url)
