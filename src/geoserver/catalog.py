@@ -138,7 +138,7 @@ class Catalog(object):
                 self._cache[rest_url] = (datetime.now(), content)
                 return parse_or_raise(content)
             else:
-                raise FailedRequestError("Tried to make a GET request to %s but got a %d status code: \n%s" % (url, response.status, content))
+                raise FailedRequestError("Tried to make a GET request to %s but got a %d status code: \n%s" % (rest_url, response.status, content))
 
     def reload(self):
         reload_url = url(self.service_url, ['reload'])
