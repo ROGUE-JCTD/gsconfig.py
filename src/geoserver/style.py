@@ -1,4 +1,5 @@
 from geoserver.support import ResourceInfo, url, xml_property
+import geoserver.workspace as ws
 
 class Style(ResourceInfo):
     def __init__(self, catalog, name):
@@ -44,3 +45,20 @@ class Style(ResourceInfo):
         headers = { "Content-Type": "application/vnd.ogc.sld+xml" }
         self.catalog.http.request(
             self.body_href(), "PUT", body, headers)
+
+
+
+class Workspace_Style(Style):
+    def __init__(self, catalog, workspace, name):
+        super(Workspace_Style, self).__init__(catalog, name)
+        
+        assert isinstance(workspace, ws.Workspace)
+        self.workspace = workspace
+
+
+    @property
+    def href(self):
+        return url(self.catalog.service_url, ["workspaces", self.workspace.name, "styles", self.name + ".xml"])
+
+    def body_href(self):
+        return url(self.catalog.service_url, ["workspaces", self.workspace.name, "styles", self.name + ".sld"])

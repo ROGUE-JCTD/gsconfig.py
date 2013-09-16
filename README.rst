@@ -1,21 +1,21 @@
-gsconfig.py
-===========
+gsconfig
+========
 
-gsconfig.py is a python library for manipulating a GeoServer instance via the GeoServer RESTConfig API. 
+gsconfig is a python library for manipulating a GeoServer instance via the GeoServer RESTConfig API. 
 
 Installing
 ==========
 
 For users: ``pip install gsconfig`` 
 
-For developers: ``git clone git://github.com/dwins/gsconfig.py.git && cd gsconfig.py && python setup.py develop``
+For developers: ``git clone git://github.com/opengeo/gsconfig.git && cd gsconfig && python setup.py develop``
 (`virtualenv <http://virtualenv.org/>`_ to taste.)
 
 Getting Help
 ============
-There is a brief manual at http://dwins.github.com/gsconfig.py/ .
+There is a brief manual at http://opengeo.github.io/gsconfig/ .
 If you have questions, please ask them on the GeoServer Users mailing list: http://geoserver.org/display/GEOS/Mailing+Lists .
-Please use the Github project at http://github.com/dwins/gsconfig.py for any bug reports (and pull requests are welcome, but please include tests where possible.)
+Please use the Github project at http://github.com/opengeo/gsconfig for any bug reports (and pull requests are welcome, but please include tests where possible.)
 
 Sample Layer Creation Code
 ==========================
@@ -63,6 +63,6 @@ Here are the commands that I use to reset before running the gsconfig tests::
 
 At this point, GeoServer will be running foregrounded, but it will take a few seconds to actually begin listening for http requests.
 You can stop it with ``CTRL-C`` (but don't do that until you've run the tests!)
-You can run the gsconfig.py tests with the following command::
+You can run the gsconfig tests with the following command::
 
   $ python setup.py test

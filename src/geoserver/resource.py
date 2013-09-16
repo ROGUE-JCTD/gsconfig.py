@@ -19,12 +19,15 @@ def write_metadata_link_list(name):
     def write(builder, md_links):
         builder.start(name, dict())
         for (mime, md_type, content_url) in md_links:
+            # geoserver supports only three mime
+            if mime not in ['ISO19115:2003', 'FGDC', 'TC211']:
+                mime = 'other'
             builder.start("metadataLink", dict())
             builder.start("type", dict())
-            builder.data(mime)
+            builder.data(md_type)
             builder.end("type")
             builder.start("metadataType", dict())
-            builder.data(md_type)
+            builder.data(mime)
             builder.end("metadataType")
             builder.start("content", dict())
             builder.data(content_url)
@@ -47,10 +50,10 @@ class FeatureType(ResourceInfo):
 
     def __init__(self, catalog, workspace, store, name):
         super(FeatureType, self).__init__()
-  
+
         assert isinstance(store, ResourceInfo)
         assert isinstance(name, basestring)
-        
+
         self.catalog = catalog
         self.workspace = workspace
         self.store = store
@@ -66,6 +69,7 @@ class FeatureType(ResourceInfo):
     title = xml_property("title")
     abstract = xml_property("abstract")
     enabled = xml_property("enabled")
+    advertised = xml_property("advertised")
     native_bbox = xml_property("nativeBoundingBox", bbox)
     latlon_bbox = xml_property("latLonBoundingBox", bbox)
     projection = xml_property("srs")
@@ -78,6 +82,7 @@ class FeatureType(ResourceInfo):
                 title = write_string("title"),
                 abstract = write_string("abstract"),
                 enabled = write_bool("enabled"),
+                advertised = write_bool("advertised"),
                 nativeBoundingBox = write_bbox("nativeBoundingBox"),
                 latLonBoundingBox = write_bbox("latLonBoundingBox"),
                 srs = write_string("srs"),
@@ -150,6 +155,7 @@ class Coverage(ResourceInfo):
     title = xml_property("title")
     abstract = xml_property("abstract")
     enabled = xml_property("enabled")
+    advertised = xml_property("advertised")
     native_bbox = xml_property("nativeBoundingBox", bbox)
     latlon_bbox = xml_property("latLonBoundingBox", bbox)
     projection = xml_property("srs")

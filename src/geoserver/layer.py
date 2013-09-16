@@ -85,7 +85,17 @@ class Layer(ResourceInfo):
         name = self.dom.find("defaultStyle/name")
         # aborted data uploads can result in no default style
         if name is not None:
-            return self.catalog.get_style(name.text)
+            style = self.catalog.get_style(name.text)
+            # the default catalog.get_style may not return a valid style if it is stored in a workspace
+            # in this case obtain the style be reading the style url directly:
+            if style is not None:
+                return style
+            else:
+                #atom_link = self.dom.find("defaultStyle/{atom}link[@rel]")
+                #atom_link = self.dom.find("defaultStyle/link[@rel]")
+                style_workspace_url = self.dom.find("defaultStyle").getchildren()[1].attrib.get("href")
+                style = self.catalog.get_style_by_url(style_workspace_url)
+                return style
         else:
             return None
 
@@ -99,8 +109,19 @@ class Layer(ResourceInfo):
             return self.dirty["alternate_styles"]
         if self.dom is None:
             self.fetch()
-        styles = self.dom.findall("styles/style/name")
-        return [Style(self.catalog, s.text) for s in styles]
+        styles_list = self.dom.findall("styles/style")
+        #styles = self.dom.findall("styles/style/name")
+        
+        alternate_styles = []
+        for s in styles_list:
+            style = self.catalog.get_style(s.find("name").text)
+            if style is not None:
+                alternate_styles.append(style)
+            else:
+                style_workspace_url = s.getchildren()[1].attrib.get("href")
+                style = self.catalog.get_style_by_url(style_workspace_url)
+                alternate_styles.append(style)
+        return alternate_styles
 
     def _set_alternate_styles(self, styles):
         self.dirty["alternate_styles"] = styles
@@ -110,6 +131,7 @@ class Layer(ResourceInfo):
 
     attribution_object = xml_property("attribution", _read_attribution)
     enabled = xml_property("enabled", lambda x: x.text == "true")
+    advertised = xml_property("advertised")
     
     def _get_attr_text(self):
         return self.attribution_object.title
@@ -127,6 +149,7 @@ class Layer(ResourceInfo):
     writers = dict(
             attribution = _write_attribution,
             enabled = write_bool("enabled"),
+            advertised = write_bool("advertised"),
             default_style = _write_default_style,
             alternate_styles = _write_alternate_styles
             )
