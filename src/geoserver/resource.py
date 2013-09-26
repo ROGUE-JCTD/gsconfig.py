@@ -69,7 +69,7 @@ class FeatureType(ResourceInfo):
     title = xml_property("title")
     abstract = xml_property("abstract")
     enabled = xml_property("enabled")
-    advertised = xml_property("advertised")
+    advertised = xml_property("advertised", default=True)
     native_bbox = xml_property("nativeBoundingBox", bbox)
     latlon_bbox = xml_property("latLonBoundingBox", bbox)
     projection = xml_property("srs")
